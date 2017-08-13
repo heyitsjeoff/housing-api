@@ -5,32 +5,85 @@ var Housing = require('../../models/housing');
 
 router.get('/', function(req, res){
 
-    Housing.find({},  function(err, houses){
+    if(req.query._id){
 
-        if(err){
+        var id;
 
-            res.status(500);
+        // cast to mongoose id
+        try{
+
+            id = mongoose.Types.ObjectId(req.query._id);
+
+        } catch (e){
+
+            res.status(400);
             res.json({
                 'success': false,
-                'message': 'well shit',
-                'exception': err.message
+                'message': 'id was not valid',
+                'exception': e.message
             });
             return;
 
         }
 
-        if(!houses){
-            res.status(204);
-            res.json({
-                'message': 'no houses'
-            });
-        } else {
-            res.json(houses);
-        }
+        Housing.findById(id, function(err, house){
 
-    });
+            if(err){
+
+                res.status(500);
+                res.json({
+                    'message': 'there was an exception',
+                    'exception': err.message
+                });
+                return;
+
+            }
+
+            if(!house){
+                res.status(400);
+                res.json({
+                    'success': false,
+                    'message': 'no house exists with that id'
+                });
+            } else {
+                res.json(house);
+            }
+
+
+        });
+
+    } else {
+
+        Housing.find({},  function(err, houses){
+
+            if(err){
+
+                res.status(500);
+                res.json({
+                    'success': false,
+                    'message': 'well shit',
+                    'exception': err.message
+                });
+                return;
+
+            }
+
+            if(!houses){
+                res.status(204);
+                res.json({
+                    'message': 'no houses'
+                });
+            } else {
+                res.json(houses);
+            }
+
+        });
+
+    }
 
 });
+
+
 
 router.post('/', function(req, res){
 
@@ -108,7 +161,7 @@ router.put('/', function(req, res){
 
     delete updatedHouse._id;
 
-    Housing.findOneAndUpdate({_id: id}, req.body, {overwrite: true, returnNewDocument: true}, function(err, updatedHouse) {
+    Housing.findOneAndUpdate({_id: id}, req.body, {overwrite: true, returnNewDocument: true, new: true}, function(err, updatedHouse) {
 
         if(err){
 
@@ -121,6 +174,9 @@ router.put('/', function(req, res){
         } else {
 
             res.status(200);
+
+            console.log(updatedHouse);
+
             res.json(updatedHouse);
 
         }

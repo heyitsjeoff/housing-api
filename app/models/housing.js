@@ -2,26 +2,36 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var HousingSchema = new Schema({
-    title: String,
     address: String,
-    description: String,
-    url: {
-        type: String,
-        required: true
-    },
-    rent: Number,
-    size: Number,
-    picUrl: String,
-    bedroomCount: Number,
-    bathroomCount: Number,
-    notes: String,
+    availableDate: String,
     approvals: [
         {
             name: String,
             approval: String
         }
     ],
-    contacted: String
+    bathroomCount: Number,
+    bedroomCount: Number,
+    company: String,
+    contacted: String,
+    contactInfo: String,
+    contactName: String,
+    deposit: Number,
+    description: String,
+    garage: String,
+    laundry: String,
+    leaseReq: Number,
+    parking: String,
+    pets: String,
+    picUrl: String,
+    rent: Number,
+    size: Number,
+    status: String,
+    title: String,
+    url: {
+        type: String,
+        required: true
+    }
 });
 
 module.exports = mongoose.model('House', HousingSchema);
